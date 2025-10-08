@@ -1,0 +1,105 @@
+{
+  "project": "Survival Island",
+  "description": "Diagramme de classes (format JSON pour JSON Crack)",
+  "classes": {
+    "Player": {
+      "attributes": {
+        "id": "int",
+        "name": "str",
+        "current_day": "int"
+      },
+      "methods": [
+        "perform_action(action: str): void",
+        "is_alive(): bool",
+        "advance_day(): void"
+      ],
+      "relations": {
+        "has": "Gauges",
+        "in": "World"
+      }
+    },
+    "Gauges": {
+      "attributes": {
+        "hunger": "int 0-100 (0=rassasié, 100=affamé)",
+        "thirst": "int 0-100 (0=hydraté, 100=déshydraté)",
+        "energy": "int 0-100 (0=épuisé, 100=plein d'énergie)"
+      },
+      "methods": [
+        "apply_daily_decay(): void",
+        "modify(hunger_delta: int, thirst_delta: int, energy_delta: int): void",
+        "is_critical(): bool",
+        "get_status(): str"
+      ],
+      "relations": {
+        "owned_by": "Player"
+      }
+    },
+    "World": {
+      "attributes": {
+        "current_day": "int",
+        "max_days": "int",
+        "weather": "str"
+      },
+      "methods": [
+        "advance_day(): void",
+        "trigger_random_event(): Event",
+        "get_current_weather(): str"
+      ],
+      "relations": {
+        "contains": "Event",
+        "visited_by": "Player"
+      }
+    },
+    "Event": {
+      "attributes": {
+        "event_id": "int",
+        "type": "str (rain, animal_encounter, find_resource)",
+        "description": "str",
+        "effects": "Dict[str, int] (hunger_delta, thirst_delta, energy_delta)"
+      },
+      "methods": [
+        "apply(player: Player): void",
+        "describe(): str",
+        "get_choices(): List[str]"
+      ],
+      "relations": {
+        "triggered_by": "World",
+        "affects": "Player"
+      }
+    },
+    "Game": {
+      "attributes": {
+        "player": "Player",
+        "world": "World",
+        "running": "bool",
+        "game_state": "str (playing, won, lost)"
+      },
+      "methods": [
+        "start(): void",
+        "game_loop(): void",
+        "process_action(action: str): void",
+        "check_end_conditions(): str",
+        "display_status(): void"
+      ],
+      "relations": {
+        "manages": ["Player", "World", "SaveManager"]
+      }
+    },
+    "SaveManager": {
+      "attributes": {
+        "save_path": "str",
+        "save_format": "str (json)"
+      },
+      "methods": [
+        "save_game(game: Game, filename: str): bool",
+        "load_game(filename: str): Game",
+        "list_saves(): List[str]",
+        "delete_save(filename: str): bool"
+      ],
+      "relations": {
+        "used_by": "Game",
+        "serializes": ["Player", "World", "Gauges"]
+      }
+    }
+  }
+}
