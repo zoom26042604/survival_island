@@ -1,6 +1,6 @@
 {
   "project": "Survival Island",
-  "description": "Diagramme de classes (format JSON pour JSON Crack)",
+  "description": "Diagramme de classes",
   "classes": {
     "Player": {
       "attributes": {
